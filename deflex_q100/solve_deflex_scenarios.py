@@ -5,7 +5,7 @@ import os
 import logging
 
 
-def all_scenarios_from_dir(path, csv=True, xls=True):
+def all_scenarios_from_dir(path, csv=True, xls=False):
     xls_scenarios = []
     csv_scenarios = []
     log = {}
@@ -14,18 +14,22 @@ def all_scenarios_from_dir(path, csv=True, xls=True):
             xls_scenarios.append(os.path.join(path, name))
         if name[-4:] == "_csv" and csv is True:
             csv_scenarios.append(os.path.join(path, name))
-    print(xls_scenarios)
-    print(csv_scenarios)
-    for x in xls_scenarios:
-        try:
-            main.model_scenario(xls_file=x)
-        except Exception as e:
-            log[x] = e
+    logging.info(str(xls_scenarios))
+    logging.info(str(csv_scenarios))
     for c in csv_scenarios:
+        name = os.path.basename(c)
+        logging.info("Next scenario: {0}".format(name))
         try:
-            main.model_scenario(csv_path=c)
+            main.model_scenario(csv_path=c, name=name)
         except Exception as e:
             log[c] = e
+    for x in xls_scenarios:
+        name = os.path.basename(x).replace(".", "_")
+        logging.info("Next scenario: {0}".format(name))
+        try:
+            main.model_scenario(xls_file=x, name=name)
+        except Exception as e:
+            log[x] = e
 
     logging.info(log)
 
