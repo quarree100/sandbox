@@ -3,6 +3,7 @@ from deflex import main
 from oemof.tools import logger
 import os
 import logging
+import pprint
 
 
 def all_scenarios_from_dir(path, csv=True, xls=False):
@@ -14,6 +15,8 @@ def all_scenarios_from_dir(path, csv=True, xls=False):
             xls_scenarios.append(os.path.join(path, name))
         if name[-4:] == "_csv" and csv is True:
             csv_scenarios.append(os.path.join(path, name))
+    csv_scenarios = sorted(csv_scenarios)
+    xls_scenarios = sorted(xls_scenarios)
     logging.info(str(xls_scenarios))
     logging.info(str(csv_scenarios))
     for c in csv_scenarios:
@@ -32,6 +35,7 @@ def all_scenarios_from_dir(path, csv=True, xls=False):
             log[x] = e
 
     logging.info(log)
+    pprint.pprint(log)
 
 
 logger.define_logging()
