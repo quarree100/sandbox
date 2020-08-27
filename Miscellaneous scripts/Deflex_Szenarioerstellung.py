@@ -7,13 +7,13 @@ logger.define_logging(logfile='oemof.log',
                       file_level=logging.DEBUG)
 
 # Erstelle Szenarien für alle Geometrien und Jahre
-# years = [2012, 2013, 2014]
-# rmaps = ['de02','de17','de21','de22']
-#
-# for year in years:
-#     for rmap in rmaps:
-#         basic_scenario.create_basic_scenario(year, rmap)
-#
+years = [2012, 2013, 2014]
+rmaps = ['de02','de17','de21','de22']
+
+for year in years:
+     for rmap in rmaps:
+         basic_scenario.create_basic_scenario(year, rmap)
+
 # print('Alles gerechnet')
 
 # Rechne alle Szenarien
