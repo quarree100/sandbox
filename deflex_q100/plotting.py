@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 
@@ -52,11 +51,11 @@ def plot_merit_order(pp, ax):
         )
     pp.to_csv("/home/uwe/00aa.csv")
     pp.set_index("capacity_cum")[pp.fuel.unique()].plot(ax=ax, alpha=0)
-    ax.set_xlabel("Kummulierte Leistung [GW]")
-    ax.set_ylabel("Grenzkostenkosten [EUR/MWh]")
+    ax.set_xlabel("Cumulative capacity [GW]")
+    ax.set_ylabel("Marginal costs [EUR/MWh]")
     ax.set_ylim(0)
     ax.set_xlim(0, pp["capacity_cum"].max())
-    ax.legend(loc=2)
+    ax.legend(loc=2, title="fuel of power plant")
     for leg in ax.get_legend().legendHandles:
         leg.set_color(cdict[leg.get_label()])
         leg.set_linewidth(4.0)

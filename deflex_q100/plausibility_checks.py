@@ -1,9 +1,9 @@
 import os
 import pandas as pd
-from deflex import data
+# from deflex import data
+from scenario_builder import data
 from deflex import geometries
-from deflex import powerplants as dp
-
+from scenario_builder import powerplants as dp
 
 TRANS = {
     "Abfall": "waste",
