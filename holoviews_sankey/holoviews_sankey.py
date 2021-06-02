@@ -135,8 +135,8 @@ def create_and_save_sankey(edges, filename=None, title='', title_html='',
 
     if filename is not None:
         # Create the output folder, if it does not already exist
-        if not os.path.exists(os.path.dirname(filename)):
-            os.makedirs(os.path.dirname(filename))
+        if not os.path.exists(os.path.abspath(os.path.dirname(filename))):
+            os.makedirs(os.path.abspath(os.path.dirname(filename)))
 
         export_png(bkplot, filename=filename+'.png', webdriver=web_driver)
         bkplot.output_backend = 'svg'
