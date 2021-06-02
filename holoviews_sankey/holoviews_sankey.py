@@ -29,7 +29,7 @@ import os
 import logging
 import pandas as pd
 import holoviews as hv
-from bokeh.io import export_png, export_svgs, show, output_file
+from bokeh.io import export_png, export_svgs, show, output_file, webdriver
 from bokeh.layouts import gridplot
 
 # Define the logging function
@@ -61,6 +61,7 @@ def main():
             sankey_list += [bkplot]  # Add result to list of sankeys
 
         except Exception as ex:
+            logger.exception(ex)  # todo
             logger.error(str(sheet_name)+': '+str(ex))
 
     # Create html output
@@ -69,7 +70,10 @@ def main():
     show(gridplot(sankey_list, ncols=1, sizing_mode='stretch_width'))
 
 
-def create_and_save_sankey(edges, filename, title, edge_color_index='To'):
+def create_and_save_sankey(edges, filename=None, title='', title_html='',
+                           edge_color_index='To', show_plot=False,
+                           fontsize=11, label_text_font_size='17pt',
+                           node_width=45, export_title=False):
     """Use HoloViews to create a Sankey plot from the input data.
 
     Args:
@@ -88,6 +92,18 @@ def create_and_save_sankey(edges, filename, title, edge_color_index='To'):
         bkplot (object): The Bokeh plot object.
 
     """
+    try:
+        # If export_png or export_svgs are called repeatedly, by default
+        # a new webdriver is created each time. For me, on Windows, those
+        # webdrivers survive the script and the processes keep running
+        # in task manager.
+        # A solution is to manually define a webdriver that we can actually
+        # close automatically:
+        web_driver = webdriver.create_firefox_webdriver()
+    except Exception as e:
+        logger.exception(e)
+        web_driver = None
+
     hv.extension('bokeh')  # Some HoloViews magic to make it work with Bokeh
 
     palette = ['#f14124', '#ff8021', '#e8d654', '#5eccf3', '#b4dcfa',
@@ -103,9 +119,10 @@ def create_and_save_sankey(edges, filename, title, edge_color_index='To'):
         edge_color_index=edge_color_index,
         cmap=palette,
         edge_cmap=palette,
-        node_width=45,  # default 15
-        fontsize=11,
-        label_text_font_size='17pt',
+        node_width=node_width,  # default 15
+        fontsize=fontsize,
+        label_text_font_size=label_text_font_size,
+        node_padding=10,  # default 10
         )
 
     # HoloViews is mainly used for creating html content. Getting the simple
@@ -113,13 +130,33 @@ def create_and_save_sankey(edges, filename, title, edge_color_index='To'):
     hvplot = hv.plotting.bokeh.BokehRenderer.get_plot(hv_sankey)
     bkplot = hvplot.state
     bkplot.toolbar_location = None  # disable Bokeh toolbar
-    export_png(bkplot, filename=filename+'.png')
-    bkplot.output_backend = 'svg'
-    export_svgs(bkplot, filename=filename+'.svg')
+    if export_title is True:  # Add the title to the file export
+        bkplot.title.text = str(title)
+
+    if filename is not None:
+        # Create the output folder, if it does not already exist
+        if not os.path.exists(os.path.dirname(filename)):
+            os.makedirs(os.path.dirname(filename))
+
+        export_png(bkplot, filename=filename+'.png', webdriver=web_driver)
+        bkplot.output_backend = 'svg'
+        export_svgs(bkplot, filename=filename+'.svg', webdriver=web_driver)
+
+    if web_driver is not None:
+        web_driver.quit()  # Quit webdriver after finishing using it
 
     # For html output
     bkplot.title.text = str(title)
     bkplot.sizing_mode = 'stretch_width'
+
+    if filename is not None:
+        if title_html == '':
+            title_html = title
+        # Create html output
+        output_file(filename + '.html', title=title_html)
+
+    if show_plot:
+        show(bkplot)
 
     return bkplot
 
