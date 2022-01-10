@@ -106,9 +106,19 @@ def create_and_save_sankey(edges, filename=None, title='', title_html='',
 
     hv.extension('bokeh')  # Some HoloViews magic to make it work with Bokeh
 
+    # Define a custom color palette
     palette = ['#f14124', '#ff8021', '#e8d654', '#5eccf3', '#b4dcfa',
                '#4e67c8', '#56c7aa', '#24f198', '#2160ff', '#c354e8',
                '#e73384', '#c76b56', '#facdb4']
+    # Alternative: Dictionary of colors related to entries in edges DataFrame.
+    # All undefined entries will be grey.
+    # palette = {'A': '#f14124', 'B': '#ff8021', 'C': '#e8d654',
+    #            'D': '#5eccf3', 'E': '#b4dcfa', 'F': '#4e67c8',
+    #            'G': '#56c7aa', 'H': '#24f198', 'I': '#2160ff',
+    #            'J': '#c354e8', 'K': '#e73384', 'L': '#c76b56',
+    #            'M': '#facdb4',
+    #            'X': '#5eccf3', 'Y': '#b4dcfa', 'Z': '#4e67c8',
+    #            }
 
     # Only keep non-zero rows (flow with zero width cannot be plotted)
     edges = edges.loc[(edges != 0).all(axis=1)]
