@@ -1,0 +1,35 @@
+# To get installed packages of current environment:
+# conda env export --from-history > req.txt
+#
+# Installation with this file:
+# conda install --file .\requirements.txt -c conda-forge -y
+#
+
+pandas
+matplotlib
+networkx
+pillow
+folium
+addict
+scipy
+coolprop
+ply
+nose
+blinker
+PyUtilib
+dill
+pyomo
+shapely
+geopandas
+osmnx
+cartopy
+holidays
+pyyaml
+openpyxl
+
+# manual pip installations:
+# pip install oemof.solph
+# pip install dhnx
+
+# lpagg installation from github or conda:
+# conda install lpagg -c jnettels -c conda-forge
